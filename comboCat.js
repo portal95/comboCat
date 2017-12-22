@@ -1,109 +1,182 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-//clear page
-function clear() {
-  ctx.fillStyle = "White";
-  ctx.fillRect(0, 0, 480, 480);
-  ctx.strokeStyle = "Black";
-  ctx.strokeRect(0, 0, 480, 480);
-}
+/*---------------------------------------------------------------------*/
+//전역변수
+var g = -30;
+var a = 25;
 
-//draw yourself
-function drawMe() {
-  ctx.fillStyle = "Green";
-  ctx.beginPath();
-  //x, y, r, startAngle, endAngle, counterClockWise
-  ctx.arc(100, 300, 50, 0, Math.PI * 2);
-  ctx.fill();
-}
-//COMBO board
-function combo() {
-  missed();
-  if(hit === 1){
-    ctx.font = "50px Comic Sans MS";
-    ctx.fillStyle = "red";
-    ctx.textAlign = "center";
-    ctx.fillText("COMBO " + comboCount + " !!!", canvas.width/2, canvas.height/2)
+//OBJECTS
+var me = {
+  hp: 5,
+  hit: false,
+  miss: false,
+  swing: 0,
+  attack: function(){
+    if(attack) {
+      if ((enemy.x > 220) && (me.hit === false)) {
+        me.miss = true;
+      } else if ((enemy.x <= 220) && (enemy.x >= 130) && (enemy.y > 230) && (me.hit === false)){
+        me.hit = true;
+        combo.count++;
+      }
+      attack = false;
+      me.swing = 1;
+    }
+    if(me.swing >= 1){
+      ctx.strokeStyle = "Red"
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(100, 300, 80, Math.PI * (-1 / 3), Math.PI * (-1 / 3 + me.swing * 1 / 16));
+      ctx.stroke();
+      me.swing++;
+      if(me.swing === 9){
+        me.swing = 0;
+      }
+    }
+  },
+  hurt: function(){
+  },
+  draw: function(){
+    ctx.fillStyle = "Green";
+    ctx.beginPath();
+    //x, y, r, startAngle, endAngle, counterClockWise
+    ctx.arc(100, 300, 50, 0, Math.PI * 2);
+    ctx.fill();
   }
-}
-var comboCount = 0;
-function missed() {
-  if(enemyX === 110){
-    miss = 1;
-  }
-  if(miss === 1){
-    missInit = 1;
-  }
-  if(missInit >= 1){
-    ctx.font = "50px Comic Sans MS";
-    ctx.fillStyle = "red";
-    ctx.textAlign = "center";
-    ctx.fillText("MISS", canvas.width/2, canvas.height/2)
-    comboCount = 0;
-    hit = 0;
-    missInit ++;
-    if(missInit === 7) {
-      missInit = 0;
+};
+
+var combo = {
+  count: 0,
+  showType:"none",
+  showTime:0,
+  draw: function(){
+    if(enemy.x === 110){
+      me.miss = true;
+    }
+    if(me.miss){
+      combo.count = 0;
+      combo.showType = "miss";
+      me.miss = false;
+    }
+    if(combo.showType === "miss"){
+      ctx.font = "50px Comic Sans MS";
+      ctx.fillStyle = "red";
+      ctx.textAlign = "center";
+      ctx.fillText("MISS", canvas.width/2, canvas.height/2)
+      combo.showTime++;
+      if(combo.showTime === 10) {
+        combo.showTime = 0;
+        combo.showType = "none"
+      }
+    }
+    if(me.hit){
+      combo.showType = "hit";
+      me.hit = false;
+    }
+    if(combo.showType === "hit"){
+      ctx.font = "50px Comic Sans MS";
+      ctx.fillStyle = "red";
+      ctx.textAlign = "center";
+      ctx.fillText("COMBO " + combo.count + " !!!", canvas.width/2, canvas.height/2)
+      combo.showTime++;
+      if(combo.showTime === 35) {
+        combo.showTime = 0;
+        combo.showType = "none"
+      }
     }
   }
+};
+
+var enemy = {
+  type:"Basic",
+  hit: false,
+  x:710,
+  y:300,
+  change: function(){
+    var n = Math.floor(2 * Math.random())
+    switch(n) {
+      case 0://space
+        enemy.type = "Basic";
+        break;
+      case 1:
+        enemy.type = "Jumper"
+    }
+  },
+  draw: function(){
+    switch(enemy.type){
+      case "Basic":
+        drawBasic();
+        break;
+      case "Jumper":
+        drawJumper();
+        break;
+    };
+  }
+};
+/*---------------------------------------------------------------------*/
+//DRAWING FUNCTIONS
+function clear() {
+  ctx.fillStyle = "White";
+  ctx.fillRect(0, 0, 640, 480);
+  ctx.strokeStyle = "Black";
+  ctx.strokeRect(0, 0, 640, 480);
 }
-var miss = 0;
-var missInit = 0;
-//draw enemy
-function drawEnemy() {
+
+function drawBasic() {
+  if(me.hit){
+    enemy.hit = true;
+  }
   ctx.fillStyle = "Blue";
   ctx.beginPath();
   //x, y, r, startAngle, endAngle, counterClockWise
-  ctx.arc(enemyX, enemyY, 50, 0, Math.PI * 2);
+  ctx.arc(enemy.x, enemy.y, 50, 0, Math.PI * 2);
   ctx.fill();
-  if(enemyX >= 550 || enemyX <= -100){
-    hit = 0;
-    enemyX = 550;
-    enemyY = 300;
-    a = -30;
+  if(enemy.x > 710 || enemy.x <= -100){
+    enemy.hit = false;
+    enemy.x = 710;
+    enemy.y = 300;
+    g = -30;
+    enemy.change();
   }
-  if(hit === 1){
-    enemyX += 10;
-    enemyY += a;
-    a += 5
+  if(enemy.hit === true){
+    enemy.x += 10;
+    enemy.y += g;
+    g += 5;
   } else {
-    enemyX -= 5;
+    enemy.x -= 5;
   }
 }
-//***enemy coordinates
-var enemyX = 550;
-var enemyY = 300;
-var a = -30;
-var hit = 0;
-//attack motion
-function attackMotion() {
-  if(attack) {
-    if ((enemyX > 220) && (hit === 0)) {
-      miss = 1;
-    } else if ((enemyX <= 220) && (enemyX >= 130) && (hit === 0)){
-      hit = 1;
-      comboCount++;
-    }
-    attack = false;
-    atkInit = true;
+
+function drawJumper() {
+  if(me.hit){
+    enemy.hit = true;
   }
-  if(atkInit){
-    ctx.strokeStyle = "Red"
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(100, 300, 80, Math.PI * (-1 / 3), Math.PI * (-1 / 3 + swing * 1 / 16));
-    ctx.stroke();
-    swing++;
-    if(swing === 9){
-      swing = 1;
-      atkInit = false;
+  ctx.fillStyle = "Blue";
+  ctx.beginPath();
+  //x, y, r, startAngle, endAngle, counterClockWise
+  ctx.arc(enemy.x, enemy.y, 50, 0, Math.PI * 2);
+  ctx.fill();
+  if(enemy.x > 710 || enemy.x <= -100){
+    enemy.hit = false;
+    enemy.x = 710;
+    enemy.y = 300;
+    g = -30;
+    a = 25;
+    enemy.change();
+  }
+  if(enemy.hit === true){
+    enemy.x += 10;
+    enemy.y += g;
+    g += 5;
+  } else {
+    enemy.x -= 5;
+    if (enemy.x < 400){
+      enemy.y -= a;
+      a -= 1;
     }
   }
 }
-var atkInit = false;
-var swing = 1;
-
-
+/*---------------------------------------------------------------------*/
 //Key handlers
 addEventListener('keydown',keyDownHandler,false);
 addEventListener('keyup',keyUpHandler,false);
@@ -120,20 +193,16 @@ function keyDownHandler(e) {
 function keyUpHandler(e) {
 }
 
-var spacePressed = false;
-
 //Keys
 var attack = false;
-
+/*---------------------------------------------------------------------*/
 //Game running
 function game() {
   clear();
-  drawMe();
-
-  attackMotion();
-  drawEnemy();
-  combo();
-  miss = 0;
+  me.draw();
+  me.attack();
+  enemy.draw();
+  combo.draw();
 }
 
 setInterval(game,10);
