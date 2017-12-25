@@ -62,6 +62,14 @@ function keyDownHandler(e) {
 function keyUpHandler(e) {
 }
 
+var btn = document.getElementById("space");
+btn.onclick = function() {
+  if(gameStart){
+    attack = true;
+  }
+  gameStart = true;
+}
+
 //Keys
 var attack = false;
 var gameStart = false;
