@@ -2,8 +2,36 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 /*---------------------------------------------------------------------*/
 //전역변수
-var g = -30;
-var a = 25;
+var g = -30; // gravity
+var a = 25; // enemyJumper
+//이미지 로더
+var loader = [false, false, false, false, false];
+var backGround = new Image();
+backGround.src = "backGround.png";
+backGround.onload = function(){
+  loader[0] = true;
+}
+var comboCat = new Image();
+comboCat.src = "comboCatBasic.png";
+comboCat.onload = function(){
+  loader[1] = true;
+}
+var attackOne = new Image();
+attackOne.src = "attack1.png";
+attackOne.onload = function(){
+  loader[2] = true;
+}
+var attackTwo = new Image();
+attackTwo.src = "attack2.png";
+attackTwo.onload = function(){
+  loader[3] = true;
+}
+var attackThree = new Image();
+attackThree.src = "attack3.png";
+attackThree.onload = function(){
+  loader[4] = true;
+}
+
 
 //OBJECTS
 var me = {
@@ -23,11 +51,15 @@ var me = {
       me.swing = 1;
     }
     if(me.swing >= 1){
-      ctx.strokeStyle = "Red"
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(100, 300, 80, Math.PI * (-1 / 3), Math.PI * (-1 / 3 + me.swing * 1 / 16));
-      ctx.stroke();
+      if(me.swing < 2){
+        ctx.drawImage(comboCat, 0, 0);
+      } else if(me.swing < 4){
+        ctx.drawImage(attack1, 0, 0);
+      } else if(me.swing < 6){
+        ctx.drawImage(attack2, 0, 0);
+      } else {
+        ctx.drawImage(attack3, 0, 0);
+      }
       me.swing++;
       if(me.swing === 9){
         me.swing = 0;
@@ -37,11 +69,9 @@ var me = {
   hurt: function(){
   },
   draw: function(){
-    ctx.fillStyle = "Green";
-    ctx.beginPath();
-    //x, y, r, startAngle, endAngle, counterClockWise
-    ctx.arc(100, 300, 50, 0, Math.PI * 2);
-    ctx.fill();
+    if(me.swing === 0){
+      ctx.drawImage(comboCat, 0, 0);
+    }
   }
 };
 
@@ -116,10 +146,7 @@ var enemy = {
 /*---------------------------------------------------------------------*/
 //DRAWING FUNCTIONS
 function clear() {
-  ctx.fillStyle = "White";
-  ctx.fillRect(0, 0, 640, 480);
-  ctx.strokeStyle = "Black";
-  ctx.strokeRect(0, 0, 640, 480);
+  ctx.drawImage(backGround, 0, 0);
 }
 
 function drawBasic() {
@@ -170,7 +197,7 @@ function drawJumper() {
     g += 5;
   } else {
     enemy.x -= 5;
-    if (enemy.x < 400){
+    if (enemy.x < 420){
       enemy.y -= a;
       a -= 1;
     }
@@ -198,11 +225,24 @@ var attack = false;
 /*---------------------------------------------------------------------*/
 //Game running
 function game() {
+  loadCheck();
   clear();
   me.draw();
   me.attack();
   enemy.draw();
   combo.draw();
+  requestAnimationFrame(game);
+}
+function loadCheck(){
+  for(var i = 0; i < loader.length; i++){
+    if(loader[i] === false){
+    }
+  }
+  for(var i = 0; i < loader.length;){
+    if(loader[i] === true){
+      i++;
+    }
+  }
 }
 
-setInterval(game,10);
+requestAnimationFrame(game);
