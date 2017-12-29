@@ -568,8 +568,126 @@ function game() {
     speed = 15;
   }
   speed = 15 - (combo.count / 2);
-  setTimeout(game, speed);
+  requestAnimationFrame(game);
 }
 //13is just right
-
-setTimeout(game, speed);
+requestAnimationFrame(game);
+// var loads = 0;
+// function loader(){
+//   comboCat[0].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   comboCat[1].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   comboCat[2].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   comboCat[3].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   comboCat[4].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   flyer[0].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   flyer[1].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   flyer[2].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   flyer[3].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   flyer[4].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   punch[0].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   punch[1].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   punch[2].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[0].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[1].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[2].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[3].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[4].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[5].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[6].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   basic[7].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   armor[0].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   armor[1].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   armor[2].onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   hp.onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   title.onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+//   gameOver.onload = function(){
+//     loads++;
+//     console.log(loads);
+//   }
+// }
+//
+// //execute when loaded
+// function loadCheck(){
+//   for(;loads !== 27;){
+//   }
+//   setTimeout(game, speed);
+// }
+// loadCheck();
